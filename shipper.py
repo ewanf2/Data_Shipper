@@ -7,20 +7,23 @@ import json
 from faker import Faker
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 fake = Faker()
 schema = "Logs"
 number_of_docs = "20"
-
+index_name = "logs"
 ES_KEY = os.getenv("ES_KEY")
 ES_URL = os.getenv("ES_URL")
 DGEN_URL = os.getenv("DGEN_URL")
 ES_PASSWORD = os.getenv("ES_PASSWORD")
 
-api_url ="/Schemas/" +schema +"/data?no=" + number_of_docs
+api_url =DGEN_URL+"/Schemas/" +schema +"/data?no=" + number_of_docs
 headers = {"Accept":"application/json"}
 client = Elasticsearch(ES_URL,api_key=ES_KEY,verify_certs=False,ssl_show_warn=False)
+
+
 
 
 def get_data(url,headers):
@@ -32,27 +35,29 @@ def get_data(url,headers):
 
 def send_data(url,headers):
     data = get_data(url,headers=headers)
-    index =schema.lower()
-    if not client.indices.exists(index=index):
-        client.indices.create(index=index)
+    if not client.indices.exists(index=index_name):
+        client.indices.create(index=index_name)
     data=json.loads(data)
+    actions = []
     for i in data:
-        item = json.dumps(i)
-        client.index(index=index, id=str(random.randint(0,10000)), body=item)
+        action = {"_index": index_name,
+                  "_source": i}
+        actions.append(action)
+    helpers.bulk(client,actions)
+
+
+    print("Data sent to elasticsearch:" + str(actions))
 
 
 
 
-    print("Data sent to elasticsearch:" + json.dumps(data))
 
 
 
+schedule.every(3).seconds.do(send_data, api_url,headers)
 
-
-schedule.every(60).seconds.do(send_data, api_url,headers)
-
-#while True:
- #   schedule.run_pending()
+while True:
+    schedule.run_pending()
 
 
 
