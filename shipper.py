@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 fake = Faker()
-schema = "Logs"
-number_of_docs = "20"
+schema = os.getenv("SCHEMA")
+number_of_docs = os.getenv("NUMBER_OF_DOCS")
 index_name = "logs"
 ES_KEY = os.getenv("ES_KEY")
 ES_URL = os.getenv("ES_URL")
