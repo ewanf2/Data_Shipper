@@ -5,15 +5,26 @@ import random
 import schedule
 import json
 from faker import Faker
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+fake = Faker()
 schema = "Logs"
-number_of_docs = "10"
-url ="http://54.210.181.24:31000/Schemas/" +schema +"/data?no=" + number_of_docs
+number_of_docs = "20"
+
+ES_KEY = os.getenv("ES_KEY")
+ES_URL = os.getenv("ES_URL")
+DGEN_URL = os.getenv("DGEN_URL")
+ES_PASSWORD = os.getenv("ES_PASSWORD")
+
+api_url ="/Schemas/" +schema +"/data?no=" + number_of_docs
 headers = {"Accept":"application/json"}
-client = Elasticsearch("https://54.210.181.24:9200",api_key="SWxaM3dwZ0JOWUhzMHA1RXQ3aE06TzBBd2RJSkE4bGpwVG84RjdLeHhUdw==",verify_certs=False)
+client = Elasticsearch(ES_URL,api_key=ES_KEY,verify_certs=False,ssl_show_warn=False)
 
 
 def get_data(url,headers):
-    request_url = urllib.request.Request(url, headers=headers)
+    request_url = urllib.request.Request(url, headers=headers,method='GET')
     with urllib.request.urlopen(request_url) as response:
         data = response.read().decode('utf-8')
     return data
@@ -38,10 +49,10 @@ def send_data(url,headers):
 
 
 
-schedule.every(10).seconds.do(send_data, url,headers)
+schedule.every(60).seconds.do(send_data, api_url,headers)
 
-while True:
-    schedule.run_pending()
+#while True:
+ #   schedule.run_pending()
 
 
 
