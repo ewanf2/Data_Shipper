@@ -10,7 +10,7 @@ number_of_docs = "10"
 url ="http://54.210.181.24:31000/Schemas/" +schema +"/data?no=" + number_of_docs
 headers = {"Accept":"application/json"}
 client = Elasticsearch("https://54.210.181.24:9200",api_key="SWxaM3dwZ0JOWUhzMHA1RXQ3aE06TzBBd2RJSkE4bGpwVG84RjdLeHhUdw==",verify_certs=False)
-#print(url)
+
 
 def get_data(url,headers):
     request_url = urllib.request.Request(url, headers=headers)
