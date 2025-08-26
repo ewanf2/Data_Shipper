@@ -9,12 +9,12 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-time_interval = 2
+time_interval = os.getenv("time_interval")
 fake = Faker()
 schema = "fighters_new" #os.getenv("SCHEMA")
 number_of_docs = os.getenv("NUMBER_OF_DOCS")
 index_name = "fighter-stats"
-ES_KEY = os.getenv("ES_KEY")
+#ES_KEY = os.getenv("ES_KEY")
 ES_URL = os.getenv("ES_URL")
 DGEN_URL = os.getenv("DGEN_URL")
 ES_PASSWORD = os.getenv("ES_PASSWORD")
@@ -111,7 +111,7 @@ def main():
     create_schema(schema) #create schema and index initially
     create_index(index_name)
     send_data(api_url,headers) #send an initial batch of data
-    schedule.every(time_interval).minutes.do(send_data, api_url,headers)
+    schedule.every(time_interval).seconds.do(send_data, api_url,headers)
     while True:
         schedule.run_pending()
 
