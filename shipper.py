@@ -4,15 +4,15 @@ from elasticsearch import Elasticsearch, helpers
 
 import schedule
 import json
-from faker import Faker
+import time
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-time_interval = int(os.getenv("time_interval"))
-fake = Faker()
+time_interval = os.getenv("time_interval")
+
 schema = "fighters_new" #os.getenv("SCHEMA")
-number_of_docs = int(os.getenv("NUMBER_OF_DOCS"))
+number_of_docs = os.getenv("NUMBER_OF_DOCS")
 index_name = "fighter-stats"
 #ES_KEY = os.getenv("ES_KEY")
 ES_URL = os.getenv("ES_URL")
@@ -83,7 +83,7 @@ def send_data(url,headers):
 
     print("Data sent to elasticsearch:" + str(actions))
 
-print(schema_spec)
+#print(schema_spec)
 
 def create_schema(schema): #creating schema if it doesn't exist already
     url = DGEN_URL + "/Schemas" #view all schemas api endpoint
@@ -111,9 +111,11 @@ def main():
     create_schema(schema) #create schema and index initially
     create_index(index_name)
     send_data(api_url,headers) #send an initial batch of data
-    schedule.every(time_interval).seconds.do(send_data, api_url,headers)
+    print(f"Sending data to {ES_URL} every {time_interval} seconds...")
+    schedule.every(int(time_interval)).seconds.do(send_data, api_url,headers)
     while True:
         schedule.run_pending()
+        time.sleep(1)
 
 
 
