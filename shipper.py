@@ -9,10 +9,10 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-time_interval = os.getenv("time_interval")
+time_interval = int(os.getenv("time_interval"))
 fake = Faker()
 schema = "fighters_new" #os.getenv("SCHEMA")
-number_of_docs = os.getenv("NUMBER_OF_DOCS")
+number_of_docs = int(os.getenv("NUMBER_OF_DOCS"))
 index_name = "fighter-stats"
 #ES_KEY = os.getenv("ES_KEY")
 ES_URL = os.getenv("ES_URL")
