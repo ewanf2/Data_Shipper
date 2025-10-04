@@ -236,6 +236,8 @@ schema_spec = {"fighters": {
             "formula": "int(Avg_fight_time * random.uniform(3, 6) * Strike_accuracy / 100)"
         }
     },
+
+    "Organisation":{"type": "Org"},
     "Takedowns_landed": {
         "type": "gauss int",
         "dependencies": {
